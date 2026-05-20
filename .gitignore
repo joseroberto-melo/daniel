@@ -1,0 +1,30 @@
+# Segurança — nunca subir senhas
+.env
+*.env
+
+# Dados locais — ficam só na máquina
+dados_*.csv
+dados_*.txt
+*.csv
+*.txt
+
+# Logs e screenshots
+logs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+*.egg-info/
+
+# VSCode
+.vscode/
+
+# Windows
+desktop.ini
+Thumbs.db
+
+# Arquivos grandes (vídeos, xlsx pesados)
+*.mp4
+DocumentosBase/

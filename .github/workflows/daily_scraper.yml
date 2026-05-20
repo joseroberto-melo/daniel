@@ -1,0 +1,47 @@
+name: "Positiva - Atualizacao Diaria de Dados"
+
+on:
+  schedule:
+    - cron: '0 23 * * 1-5'  # 20:00 BRT (23:00 UTC), segunda a sexta
+  workflow_dispatch:          # Permite rodar manualmente pelo GitHub
+
+jobs:
+  scrape-and-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: "Checkout do código"
+        uses: actions/checkout@v4
+
+      - name: "Configurar Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: "Instalar dependências"
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: "Executar Orquestrador"
+        env:
+          CALLBOX_USER: ${{ secrets.CALLBOX_USER }}
+          CALLBOX_PASS: ${{ secrets.CALLBOX_PASS }}
+          PORTAL_USER: ${{ secrets.PORTAL_USER }}
+          PORTAL_PASS: ${{ secrets.PORTAL_PASS }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          HEADLESS: "True"
+        run: python main_orchestrator.py
+
+      - name: "Upload de logs e screenshots (em caso de erro)"
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-erro
+          path: |
+            logs/
+          retention-days: 7
