@@ -25,10 +25,7 @@ echo [3/4] Adicionando arquivos...
 %GIT% commit -m "feat: sistema positiva bi - scrapers, dashboard e github actions"
 
 echo [4/4] Enviando para o GitHub...
-echo.
-echo  ATENCAO: Uma janela de login do GitHub pode aparecer.
-echo  Faca login com sua conta do GitHub quando solicitado.
-echo.
+%GIT% remote set-url origin https://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@github.com/joseroberto-melo/daniel.git
 %GIT% branch -M main
 %GIT% push -u origin main
 
