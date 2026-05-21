@@ -208,10 +208,18 @@ vidas_col = find_col(df_f, ['vidas', 'nº'])
 vendas = perdas = analise = total_vidas = 0
 
 if sta_col2 and not df_f.empty:
-    sv = df_f[sta_col2].astype(str).str.upper()
+    # Normaliza a coluna de status para evitar duplicidade devido a acentos e espaços
+    df_f[sta_col2] = df_f[sta_col2].fillna("Sem Status / Em Aberto").astype(str).str.strip().str.upper()
+    df_f[sta_col2] = df_f[sta_col2].replace({
+        "EM ANALISE": "EM ANÁLISE",
+        "ANALISE": "EM ANÁLISE",
+        "ANÁLISE": "EM ANÁLISE"
+    })
+    
+    sv = df_f[sta_col2]
     vendas   = int(sv.str.contains("GANHO|CONTRATOU|VENDA").sum())
     perdas   = int(sv.str.contains("PERDA").sum())
-    analise  = int(sv.str.contains("ANALISE|ANÁLISE").sum())
+    analise  = int(sv.str.contains("EM ANÁLISE").sum())
 if vidas_col and not df_f.empty:
     total_vidas = int(pd.to_numeric(df_f[vidas_col], errors='coerce').sum())
 
@@ -243,9 +251,8 @@ with col_l:
 with col_r:
     st.markdown("<h3 style='font-size: 1.15rem; font-weight: 600; margin-bottom: 15px; color:#ffffff;'>Top Status dos Leads</h3>", unsafe_allow_html=True)
     if not df_f.empty and sta_col2:
-        # Preenche valores em branco com 'Sem Status / Em Aberto' para bater com o total de 8.151
-        status_series = df_f[sta_col2].fillna("Sem Status / Em Aberto").astype(str)
-        sc = status_series.value_counts().head(8).reset_index()
+        # Usa a coluna que já foi completamente normalizada
+        sc = df_f[sta_col2].value_counts().head(8).reset_index()
         sc.columns = ['Status', 'Qtd']
         fig2 = px.bar(sc, x='Qtd', y='Status', orientation='h',
                       color_discrete_sequence=["#007aff"], text='Qtd')
