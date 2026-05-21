@@ -12,87 +12,98 @@ st.set_page_config(
 )
 
 st.markdown("""<style>
-/* Importa a fonte premium Inter */
+/* Importa a fonte San Francisco / Inter */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 html, body, [class*="css"], .stApp {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif !important;
+    background-color: #000000 !important;
+    color: #f5f5f7 !important;
 }
 
-.stApp { 
-    background-color: #090d16; 
-    color: #f1f5f9; 
-}
+/* Oculta os menus padrões do Streamlit para parecer um app nativo */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {background-color: transparent !important;}
 
-/* Sidebar clean, sem bordas coloridas */
+/* Barra lateral premium integrada (estilo iPadOS) */
 [data-testid="stSidebar"] { 
-    background-color: #0d121f; 
-    border-right: 1px solid #1e293b; 
+    background-color: #08080a !important; 
+    border-right: 1px solid #1c1c1e !important; 
 }
 
-/* Cards de métricas estilo SaaS (Stripe/Linear) */
+/* Cards de Métricas Estilo Apple (Space Gray Titanium) */
 [data-testid="stMetric"] {
-    background-color: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 12px;
-    padding: 20px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    background-color: #1c1c1e !important;
+    border: 1px solid #2c2c2e !important;
+    border-radius: 14px !important;
+    padding: 24px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
 }
 [data-testid="stMetricValue"] { 
     color: #ffffff !important; 
-    font-size: 2rem !important; 
+    font-size: 2.2rem !important; 
     font-weight: 700 !important; 
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em !important;
 }
 [data-testid="stMetricLabel"] { 
-    color: #9ca3af !important; 
-    font-size: 0.8rem !important; 
-    font-weight: 500 !important;
-    text-transform: none; 
-    letter-spacing: normal; 
+    color: #86868b !important; 
+    font-size: 0.85rem !important; 
+    font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
+    text-transform: none !important;
 }
 
+/* Títulos elegantes e limpos */
 h1, h2, h3 { 
     color: #ffffff !important; 
     font-weight: 700 !important;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em !important;
 }
 
 hr { 
-    border-color: #1f2937 !important; 
+    border-color: #1c1c1e !important; 
 }
 
-/* Botão premium com transição suave */
+/* Botões Nativos da Apple (Capsule azul clássico) */
 .stButton > button {
-    background: #4f46e5;
-    color: #ffffff;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
-    transition: all 0.2s ease;
+    background-color: #0071e3 !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    border: none !important;
+    border-radius: 999px !important;
+    padding: 8px 24px !important;
+    font-size: 0.9rem !important;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 .stButton > button:hover { 
-    background: #4338ca;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-    transform: translateY(-1px); 
+    background-color: #147ce5 !important;
+    transform: scale(1.02);
 }
 
-/* Inputs minimalistas */
+/* Inputs de texto elegantes e planos */
 .stTextInput input { 
-    background-color: #111827 !important; 
-    color: #f1f5f9 !important; 
-    border: 1px solid #374151 !important; 
-    border-radius: 8px !important; 
+    background-color: #1c1c1e !important; 
+    color: #ffffff !important; 
+    border: 1px solid #2c2c2e !important; 
+    border-radius: 10px !important; 
+    padding: 12px 16px !important;
+}
+
+/* Selectboxes premium */
+div[data-baseweb="select"] {
+    background-color: #1c1c1e !important;
+    border: 1px solid #2c2c2e !important;
+    border-radius: 10px !important;
 }
 </style>""", unsafe_allow_html=True)
 
 PLOTLY_LAYOUT = dict(
     plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
-    font=dict(color='#9ca3af', size=12, family="Inter"), margin=dict(t=30, b=20, l=10, r=10),
-    xaxis=dict(gridcolor='#1f2937', color='#9ca3af'),
-    yaxis=dict(gridcolor='#1f2937', color='#9ca3af'),
-    legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color='#9ca3af')),
+    font=dict(color='#86868b', size=12, family="-apple-system, Inter"), margin=dict(t=30, b=20, l=10, r=10),
+    xaxis=dict(gridcolor='#1c1c1e', color='#86868b'),
+    yaxis=dict(gridcolor='#1c1c1e', color='#86868b'),
+    legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color='#86868b')),
     coloraxis_showscale=False,
 )
 
@@ -148,12 +159,12 @@ fonte = st.session_state.get('fonte', '...')
 # ---- SIDEBAR ----
 with st.sidebar:
     st.markdown("""<div style='padding: 20px 0 10px 0;'>
-        <div style='font-size: 0.8rem; font-weight: 700; color: #818cf8; text-transform: uppercase; letter-spacing: 0.05em;'>Positiva Administradora</div>
-        <div style='font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-top: 4px; letter-spacing: -0.02em;'>Painel de Performance</div>
+        <div style='font-size: 0.8rem; font-weight: 600; color: #86868b; text-transform: uppercase; letter-spacing: 0.05em;'>Positiva Administradora</div>
+        <div style='font-size: 1.4rem; font-weight: 700; color: #ffffff; margin-top: 4px; letter-spacing: -0.03em;'>Performance</div>
     </div>""", unsafe_allow_html=True)
     st.divider()
-    st.markdown(f"<p style='font-size:0.75rem;color:#6b7280;margin-bottom:15px;'>{fonte}</p>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size:0.85rem;font-weight:600;color:#9ca3af;'>Filtros de Visão</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size:0.75rem;color:#86868b;margin-bottom:15px;'>{fonte}</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:0.85rem;font-weight:600;color:#f5f5f7;'>Filtros de Visão</p>", unsafe_allow_html=True)
 
     sdr_col = find_col(df, ['sdr_nome'])
     ent_col = find_col(df, ['entidade'])
@@ -168,7 +179,7 @@ with st.sidebar:
     if st.button("🔄 Recarregar Dados"):
         st.cache_data.clear()
         st.rerun()
-    st.markdown(f"<p style='color:#4b5563;font-size:0.7rem;text-align:center;margin-top:10px;'>Sincronizado: {datetime.now().strftime('%d/%m/%Y %H:%M')}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:#86868b;font-size:0.7rem;text-align:center;margin-top:10px;'>Sincronizado: {datetime.now().strftime('%d/%m/%Y %H:%M')}</p>", unsafe_allow_html=True)
 
 # ---- FILTRAR ----
 df_f = df.copy() if not df.empty else pd.DataFrame()
@@ -177,14 +188,14 @@ if not df_f.empty:
     if ent_filtro != "Todas Entidades" and ent_col: df_f = df_f[df_f[ent_col] == ent_filtro]
 
 # ---- HEADER ----
-st.markdown("""<div style='background-color: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px 32px; margin-bottom: 24px;'>
+st.markdown("""<div style='padding: 10px 0 20px 0; margin-bottom: 24px; border-bottom: 1px solid #1c1c1e;'>
     <div style='display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;'>
         <div>
-            <h1 style='margin: 0; font-size: 1.75rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em;'>Visão Geral de Leads e Conversão</h1>
-            <p style='margin: 4px 0 0 0; color: #94a3b8; font-size: 0.9rem;'>Consolidação comercial atualizada em tempo real</p>
+            <h1 style='margin: 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; letter-spacing: -0.04em;'>Visão Geral de Leads e Conversão</h1>
+            <p style='margin: 4px 0 0 0; color: #86868b; font-size: 0.95rem; font-weight: 400;'>Consolidação comercial em tempo real</p>
         </div>
-        <div style='background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 6px 14px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;'>
-            <span style='width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #10b981;'></span>
+        <div style='background: rgba(48, 209, 88, 0.1); border: 1px solid rgba(48, 209, 88, 0.2); color: #30d158; padding: 6px 14px; border-radius: 9999px; font-size: 0.8rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;'>
+            <span style='width: 6px; height: 6px; background-color: #30d158; border-radius: 50%; display: inline-block;'></span>
             Ao Vivo
         </div>
     </div>
@@ -215,27 +226,27 @@ st.divider()
 # ---- GRÁFICOS ----
 col_l, col_r = st.columns([1.3, 1])
 
-# Cores corporativas elegantes (escala de violetas e cinzas)
-COLOR_THEME = ["#6366f1", "#818cf8", "#a5b4fc", "#c7d2fe", "#e0e7ff"]
+# Apple Palette: Blue, Purple, Orange, Green, Teal
+APPLE_PALETTE = ["#007aff", "#af52de", "#ff9500", "#34c759", "#5ac8fa", "#ff3b30"]
 
 with col_l:
-    st.markdown("<h3 style='font-size: 1.1rem; font-weight: 600; margin-bottom: 15px;'>Leads por Entidade</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-size: 1.15rem; font-weight: 600; margin-bottom: 15px; color:#ffffff;'>Leads por Entidade</h3>", unsafe_allow_html=True)
     if not df_f.empty and ent_col:
         ec = df_f[ent_col].value_counts().reset_index()
         ec.columns = ['Entidade', 'Qtd']
-        fig = px.pie(ec, names='Entidade', values='Qtd', hole=0.6,
-                     color_discrete_sequence=COLOR_THEME)
+        fig = px.pie(ec, names='Entidade', values='Qtd', hole=0.7,
+                     color_discrete_sequence=APPLE_PALETTE)
         fig.update_layout(**PLOTLY_LAYOUT)
-        fig.update_traces(textfont_color='white', textposition='inside', textinfo='percent')
+        fig.update_traces(textfont_color='white', textposition='outside', textinfo='percent')
         st.plotly_chart(fig, use_container_width=True)
 
 with col_r:
-    st.markdown("<h3 style='font-size: 1.1rem; font-weight: 600; margin-bottom: 15px;'>Top Status dos Leads</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-size: 1.15rem; font-weight: 600; margin-bottom: 15px; color:#ffffff;'>Top Status dos Leads</h3>", unsafe_allow_html=True)
     if not df_f.empty and sta_col2:
         sc = df_f[sta_col2].value_counts().head(8).reset_index()
         sc.columns = ['Status', 'Qtd']
         fig2 = px.bar(sc, x='Qtd', y='Status', orientation='h',
-                      color_discrete_sequence=["#6366f1"], text='Qtd')
+                      color_discrete_sequence=["#007aff"], text='Qtd')
         fig2.update_layout(**PLOTLY_LAYOUT)
         fig2.update_traces(textfont_color='white', textposition='inside')
         st.plotly_chart(fig2, use_container_width=True)
@@ -243,38 +254,38 @@ with col_r:
 st.divider()
 
 if not df_f.empty and sdr_col:
-    st.markdown("<h3 style='font-size: 1.1rem; font-weight: 600; margin-bottom: 15px;'>Desempenho por Vendedor / SDR</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-size: 1.15rem; font-weight: 600; margin-bottom: 15px; color:#ffffff;'>Desempenho por Vendedor / SDR</h3>", unsafe_allow_html=True)
     sdr_c = df_f[sdr_col].value_counts().reset_index()
     sdr_c.columns = ['SDR', 'Leads']
     fig3 = px.bar(sdr_c, x='SDR', y='Leads', 
-                  color_discrete_sequence=["#4f46e5"], text='Leads')
+                  color_discrete_sequence=["#007aff"], text='Leads')
     fig3.update_layout(**PLOTLY_LAYOUT)
     fig3.update_traces(textfont_color='white', textposition='inside')
     st.plotly_chart(fig3, use_container_width=True)
     st.divider()
 
 # ---- QUARTIS ----
-st.markdown("<h3 style='font-size: 1.25rem; font-weight: 700; margin-bottom: 20px;'>Metas por Quartil</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color:#ffffff;'>Metas por Quartil</h3>", unsafe_allow_html=True)
 quartis = [
-    ("1º Quartil", "1 a 3 vidas", "R$ 7.348,50", "#94a3b8"),
-    ("2º Quartil", "4 a 8 vidas", "R$ 14.697,00", "#6366f1"),
-    ("3º Quartil", "9 a 12 vidas", "R$ 22.045,50", "#4f46e5"),
-    ("4º Quartil ★", "13 a 18 vidas", "R$ 29.394,00", "#10b981"),
+    ("1º Quartil", "1 a 3 vidas", "R$ 7.348,50", "#8e8e93"),
+    ("2º Quartil", "4 a 8 vidas", "R$ 14.697,00", "#007aff"),
+    ("3º Quartil", "9 a 12 vidas", "R$ 22.045,50", "#af52de"),
+    ("4º Quartil ★", "13 a 18 vidas", "R$ 29.394,00", "#34c759"),
 ]
 qcols = st.columns(4)
 for i, (titulo, vidas, premio, cor) in enumerate(quartis):
     with qcols[i]:
-        st.markdown(f"""<div style='background-color: #0f172a;
-            border: 1px solid #1e293b; border-left: 4px solid {cor}; border-radius: 8px; padding: 20px; text-align: left;'>
-            <div style='font-size:0.75rem; color:#6b7280; font-weight:600; text-transform:uppercase; letter-spacing:0.05em'>{titulo}</div>
-            <div style='font-size:1.5rem; font-weight:800; color:#ffffff; margin:6px 0'>{vidas}</div>
-            <div style='font-size:0.85rem; color:#94a3b8; font-weight:500'>Comissão: <span style='color:{cor}; font-weight:700'>{premio}/mês</span></div>
+        st.markdown(f"""<div style='background-color: #1c1c1e;
+            border: 1px solid #2c2c2e; border-radius: 12px; padding: 24px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.3);'>
+            <div style='font-size:0.75rem; color:#86868b; font-weight:600; text-transform:uppercase; letter-spacing:0.05em'>{titulo}</div>
+            <div style='font-size:1.75rem; font-weight:700; color:#ffffff; margin:8px 0; letter-spacing:-0.02em;'>{vidas}</div>
+            <div style='font-size:0.85rem; color:#86868b; font-weight:400;'>Comissão: <span style='color:{cor}; font-weight:600;'>{premio}/mês</span></div>
         </div>""", unsafe_allow_html=True)
 
 st.divider()
 
 # ---- TABELA ----
-st.markdown("<h3 style='font-size: 1.25rem; font-weight: 700; margin-bottom: 15px;'>Base de Dados Completa</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; color:#ffffff;'>Base de Dados Completa</h3>", unsafe_allow_html=True)
 sr, ex = st.columns([4, 1])
 with sr:
     busca = st.text_input("", placeholder="🔍  Digite nome, telefone, entidade ou status para filtrar a tabela...")
@@ -295,11 +306,10 @@ if not df_f.empty:
     if not show: show = dv.columns.tolist()[:8]
     st.caption(f"Exibindo {len(dv):,} de {len(df_f):,} registros")
     
-    # Customização da tabela Streamlit
     st.dataframe(dv[show].reset_index(drop=True), use_container_width=True, height=430)
 else:
     st.warning("⚠️ Sem dados. Configure o Supabase ou rode o orquestrador localmente.")
 
 st.divider()
-st.markdown(f"<p style='text-align:center; color:#4b5563; font-size:0.75rem; padding: 20px 0;'>Positiva Administradora © {datetime.now().year} • Painel Corporativo</p>",
+st.markdown(f"<p style='text-align:center; color:#86868b; font-size:0.75rem; padding: 25px 0;'>Positiva Administradora • Painel de Performance Corporativa © {datetime.now().year}</p>",
             unsafe_allow_html=True)
