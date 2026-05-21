@@ -49,9 +49,21 @@ def load_data():
         try:
             from supabase import create_client
             sb = create_client(supabase_url, supabase_key)
-            resp = sb.table("fct_oportunidades_sdr").select("*").execute()
-            df = pd.DataFrame(resp.data)
-            st.session_state['fonte'] = "☁️ Supabase (Nuvem)"
+            # Busca com paginação para passar do limite de 1.000 registros
+            all_data = []
+            page_size = 1000
+            offset = 0
+            while True:
+                resp = sb.table("fct_oportunidades_sdr").select("*").range(offset, offset + page_size - 1).execute()
+                batch = resp.data
+                if not batch:
+                    break
+                all_data.extend(batch)
+                if len(batch) < page_size:
+                    break
+                offset += page_size
+            df = pd.DataFrame(all_data)
+            st.session_state['fonte'] = f"☁️ Supabase (Nuvem) — {len(df):,} registros"
             return df
         except Exception as e:
             st.session_state['fonte'] = f"⚠️ Supabase falhou: {e} — usando CSV local"
