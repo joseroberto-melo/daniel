@@ -71,7 +71,7 @@ def upsert_dataframe(df: pd.DataFrame, table_name: str, conflict_cols: list = No
             print(f"  ERRO no lote {i//BATCH + 1}: {e}")
 
 def save_sdr_leads(df: pd.DataFrame):
-    """Salva os leads das planilhas SDR mapeando para o schema da tabela."""
+    """Salva os leads das planilhas SDR mapeando para o schema da tabela com fallback inteligente."""
     if df.empty:
         return
     import json as _json
@@ -86,13 +86,13 @@ def save_sdr_leads(df: pd.DataFrame):
         'e-mail': 'email', 'email': 'email',
         'tipo de cotação': 'tipo_cotacao', 'tipo de cotacao': 'tipo_cotacao',
         'n° vidas': 'n_vidas', 'nº vidas': 'n_vidas', 'n vidas': 'n_vidas',
+        'nº vidas/ idades': 'n_vidas', 'n° vidas/ idades': 'n_vidas', 'nº vidas/idades': 'n_vidas',
         'motivo da perda': 'motivo', 'motivo': 'motivo',
         'data da solicitação': 'data_solicitacao', 'data da solicitacao': 'data_solicitacao',
         'data do envio': 'data_envio',
         'status finalizadores': 'status',
     }
 
-    import json as _json
     rows = []
     for i, (_, row) in enumerate(df.iterrows()):
         record = {'updated_at': datetime.now().isoformat()}
@@ -113,6 +113,26 @@ def save_sdr_leads(df: pd.DataFrame):
                 record[mapped] = val
             else:
                 extra[col_lower] = val
+
+        # --- Inteligência de Fallback para Status ---
+        # Se 'status' ainda estiver vazio/null, tenta buscar nas outras colunas de status da planilha
+        status_val = record.get('status')
+        if not status_val or pd.isna(status_val) or str(status_val).strip() == '' or str(status_val).upper() == 'NONE':
+            for alt in ['status finalizadores', 'status', 'status odonto', 'status saude', 'status final']:
+                val_alt = row.get(alt)
+                if val_alt and not pd.isna(val_alt) and str(val_alt).strip() != '' and str(val_alt).upper() != 'NONE':
+                    record['status'] = str(val_alt).strip()
+                    break
+
+        # --- Inteligência de Fallback para Vidas ---
+        # Se 'n_vidas' estiver vazio/null, tenta buscar em variações
+        vidas_val = record.get('n_vidas')
+        if not vidas_val or pd.isna(vidas_val) or str(vidas_val).strip() == '' or str(vidas_val).upper() == 'NONE':
+            for alt in ['nº vidas/ idades', 'n° vidas/ idades', 'nº vidas', 'n° vidas', 'n vidas']:
+                val_alt = row.get(alt)
+                if val_alt and not pd.isna(val_alt) and str(val_alt).strip() != '' and str(val_alt).upper() != 'NONE':
+                    record['n_vidas'] = val_alt
+                    break
 
         record['extra'] = _json.dumps(extra, ensure_ascii=False, default=str)
         # Gera ID único
