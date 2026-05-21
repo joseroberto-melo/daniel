@@ -243,7 +243,9 @@ with col_l:
 with col_r:
     st.markdown("<h3 style='font-size: 1.15rem; font-weight: 600; margin-bottom: 15px; color:#ffffff;'>Top Status dos Leads</h3>", unsafe_allow_html=True)
     if not df_f.empty and sta_col2:
-        sc = df_f[sta_col2].value_counts().head(8).reset_index()
+        # Preenche valores em branco com 'Sem Status / Em Aberto' para bater com o total de 8.151
+        status_series = df_f[sta_col2].fillna("Sem Status / Em Aberto").astype(str)
+        sc = status_series.value_counts().head(8).reset_index()
         sc.columns = ['Status', 'Qtd']
         fig2 = px.bar(sc, x='Qtd', y='Status', orientation='h',
                       color_discrete_sequence=["#007aff"], text='Qtd')
